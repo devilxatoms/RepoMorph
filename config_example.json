@@ -1,0 +1,41 @@
+{
+    "repositories": [
+      {
+        "source_provider": "github",
+        "target_provider": "gitlab",
+        "source_url": "https://github.com/user/repo1",
+        "target_url": "https://gitlab.com/user/repo1",
+        "source_token": "your_github_token",
+        "target_token": "your_gitlab_token",
+        "keep_all_branches_history": true,
+        "desired_git_workflow": "feature-branch",
+        "delete_source_repo": false,
+        "carry_users": true,
+        "sync_teams": true,
+        "invite_missing_users": false,
+        "transfer_issues": true,
+        "transfer_wiki": true,
+        "transfer_pull_requests": false,
+        "transfer_ci_cd_pipelines": false
+      },
+      {
+        "source_provider": "bitbucket",
+        "target_provider": "gitlab",
+        "source_url": "https://bitbucket.org/user/repo2",
+        "target_url": "https://gitlab.com/user/repo2",
+        "source_token": "your_bitbucket_token",
+        "target_token": "your_gitlab_token",
+        "keep_all_branches_history": false,
+        "desired_git_workflow": "trunk-based",
+        "delete_source_repo": true,
+        "carry_users": false,
+        "sync_teams": false,
+        "invite_missing_users": false,
+        "transfer_issues": false,
+        "transfer_wiki": false,
+        "transfer_pull_requests": false,
+        "transfer_ci_cd_pipelines": false
+      }
+    ]
+  }
+  

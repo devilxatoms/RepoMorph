@@ -3,34 +3,12 @@ package cli
 import (
 	"fmt"
 
-	"devilxstudios.com/repomorph/internal/migrator"
-
+	"devilxstudios.com/repomorph/internal/config"
+	"devilxstudios.com/repomorph/internal/models"
 	"github.com/spf13/cobra"
 )
 
-// MigrationOptions defines the structure for storing migration parameters
-// These options are set via command-line flags and passed to the migration process
-type MigrationOptions struct {
-	SourceProvider         string // Source provider (e.g., GitHub, GitLab, Bitbucket)
-	TargetProvider         string // Target provider (e.g., GitHub, GitLab, Bitbucket)
-	SourceURL              string // URL of the source repository
-	TargetURL              string // URL of the target repository
-	SourceToken            string // Authentication token for the source provider
-	TargetToken            string // Authentication token for the target provider
-	ConfigFile             string // Configuration file for bulk migrations
-	KeepAllBranchesHistory bool   // Whether to keep all branch history during migration
-	DesiredGitWorkflow     string // The desired Git workflow for the migrated repository
-	DeleteSourceRepo       bool   // Whether to delete the source repository after migration
-	CarryUsers             bool   // Whether to migrate users and permissions
-	SyncTeams              bool   // Whether to sync teams between providers
-	InviteMissingUsers     bool   // Whether to invite missing users to the new repository
-	TransferIssues         bool   // Whether to transfer issues from the source repository
-	TransferWiki           bool   // Whether to transfer the repository wiki
-	TransferPullRequests   bool   // Whether to transfer open pull requests
-	TransferCiCdPipelines  bool   // Whether to transfer CI/CD pipeline configurations
-}
-
-var migrationOptions MigrationOptions
+var migrationOptions models.MigrationOptions
 
 // migrateCmd captures user input and calls `migrator.ExecuteMigration()`
 var migrateCmd = &cobra.Command{
@@ -40,31 +18,30 @@ var migrateCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("🔄 Starting repository migration...")
 
-		// Select appropriate migrator based on the source provider
-		m := migrator.SelectMigrator(migrator.MigratorConfig{
-			SourceProvider: migrationOptions.SourceProvider,
-			SourceURL:      migrationOptions.SourceURL,
-			TargetURL:      migrationOptions.TargetURL,
-			SourceToken:    migrationOptions.SourceToken,
-			TargetToken:    migrationOptions.TargetToken,
-		})
-		if m == nil {
-			fmt.Println("❌ Unsupported provider:", migrationOptions.SourceProvider)
+		fmt.Println("migrationOptions", &migrationOptions)
+
+		// Load configuration from file or CLI flags
+		migrationConfig, err := config.LoadConfig(&migrationOptions)
+		if err != nil {
+			fmt.Println("❌ Error loading configuration file:", err)
 			return
 		}
 
-		// Define the migration configuration with advanced options
-		config := &migrator.MigrationConfig{
-			KeepAllBranchesHistory: migrationOptions.KeepAllBranchesHistory,
-			DesiredGitWorkflow:     migrationOptions.DesiredGitWorkflow,
-			DeleteSourceRepo:       migrationOptions.DeleteSourceRepo,
-			CarryUsers:             migrationOptions.CarryUsers,
-		}
+		fmt.Println("migrationOptions", &migrationOptions)
 
-		// Execute the migration process
-		fmt.Println("🚀 Executing migration...")
-		migrator.ExecuteMigration(m, config)
-		fmt.Println("✅ Migration completed successfully!")
+		fmt.Println("validating migrationConfig", migrationConfig)
+
+		// // Select appropriate migrator based on the source provider
+		// m := migrator.SelectMigrator(migrationConfig)
+		// if m == nil {
+		// 	fmt.Println("❌ Unsupported provider:", migrationConfig.SourceProvider)
+		// 	return
+		// }
+
+		// // Execute the migration process
+		// fmt.Println("🚀 Executing migration...")
+		// migrator.ExecuteMigration(m, migrationConfig)
+		// fmt.Println("✅ Migration completed successfully!")
 	},
 }
 
