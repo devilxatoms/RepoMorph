@@ -2,7 +2,9 @@ package migrator
 
 import "fmt"
 
-// Migrator define la interfaz para la migración de repositorios.
+// Migrator define la interfaz para la migración de repositorios
+// Cualquier proveedor (GitHub, GitLab, Bitbucket) debe implementarla
+
 type Migrator interface {
 	Authenticate() error
 	CloneRepository() error
@@ -11,7 +13,7 @@ type Migrator interface {
 	SetPermissions() error
 }
 
-// ExecuteMigration ejecuta la migración usando la implementación adecuada.
+// ExecuteMigration ejecuta la migración con la implementación del proveedor seleccionado
 func ExecuteMigration(m Migrator) {
 	fmt.Println("\n🚀 Starting migration...")
 

@@ -23,36 +23,9 @@ between different Git hosting services such as GitHub, GitLab, and Bitbucket.`,
 	},
 }
 
-// Definir el comando `migrate`
-var migrateCmd = &cobra.Command{
-	Use:   "migrate",
-	Short: "Migrate a repository from one provider to another",
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("🚀 Starting migration...")
-		fmt.Printf("🔹 Source: %s (%s)\n", sourceURL, sourceProvider)
-		fmt.Printf("🔹 Target: %s (%s)\n", targetURL, targetProvider)
-		fmt.Println("✅ Migration completed!")
-	},
-}
-
-var (
-	sourceProvider string
-	targetProvider string
-	sourceURL      string
-	targetURL      string
-	token          string
-)
-
-// Inicializar los comandos y flags
+// Inicializar la CLI
 func init() {
 	rootCmd.PersistentFlags().StringVarP(&mode, "mode", "m", "cli", "Execution mode: cli, ui, or api")
-	rootCmd.AddCommand(migrateCmd)
-
-	migrateCmd.Flags().StringVarP(&sourceProvider, "source", "s", "", "Source provider (github/gitlab/bitbucket)")
-	migrateCmd.Flags().StringVarP(&targetProvider, "target", "t", "", "Target provider (github/gitlab/bitbucket)")
-	migrateCmd.Flags().StringVarP(&sourceURL, "source-url", "", "", "Source repository URL")
-	migrateCmd.Flags().StringVarP(&targetURL, "target-url", "", "", "Target repository URL")
-	migrateCmd.Flags().StringVarP(&token, "token", "", "", "Authentication token")
 }
 
 // Execute runs the CLI application
