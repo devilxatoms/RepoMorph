@@ -4,6 +4,7 @@ type MigrationConfig struct {
 	SourceProvider         string `json:"source_provider" yaml:"source_provider"`
 	TargetProvider         string `json:"target_provider" yaml:"target_provider"`
 	SourceURL              string `json:"source_url" yaml:"source_url"`
+	TargetRepoName         string `json:"target_repo_name" yaml:"target_repo_name"`
 	TargetURL              string `json:"target_url" yaml:"target_url"`
 	SourceToken            string `json:"source_token" yaml:"source_token"`
 	TargetToken            string `json:"target_token" yaml:"target_token"`

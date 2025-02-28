@@ -17,7 +17,7 @@ type MigratorConfig struct {
 }
 
 // SelectMigrator retorna una implementación de Migrator según el proveedor seleccionado
-func SelectMigrator(config MigratorConfig) Migrator {
+func SelectMigrator(config *MigratorConfig) Migrator {
 	switch config.SourceProvider {
 	case "github":
 		return &github.GitHubMigrator{

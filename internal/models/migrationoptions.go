@@ -6,6 +6,7 @@ type MigrationOptions struct {
 	SourceProvider         string // Source provider (e.g., GitHub, GitLab, Bitbucket)
 	TargetProvider         string // Target provider (e.g., GitHub, GitLab, Bitbucket)
 	SourceURL              string // URL of the source repository
+	TargetRepoName         string // Name of the target repository
 	TargetURL              string // URL of the target repository
 	SourceToken            string // Authentication token for the source provider
 	TargetToken            string // Authentication token for the target provider

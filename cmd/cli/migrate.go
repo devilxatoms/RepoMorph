@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"devilxstudios.com/repomorph/internal/config"
+	"devilxstudios.com/repomorph/internal/migrator"
 	"devilxstudios.com/repomorph/internal/models"
 	"github.com/spf13/cobra"
 )
@@ -18,35 +19,34 @@ var migrateCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("🔄 Starting repository migration...")
 
-		fmt.Println("migrationOptions", &migrationOptions)
-
 		// Load configuration from file or CLI flags
-		migrationConfig, err := config.LoadConfig(&migrationOptions)
+		migrationBulkConfig, err := config.LoadConfig(&migrationOptions)
 		if err != nil {
 			fmt.Println("❌ Error loading configuration file:", err)
 			return
 		}
 
-		fmt.Println("migrationOptions", &migrationOptions)
+		// Iterate over repositories in the bulk migration config
+		for _, migrationConfig := range migrationBulkConfig.Repositories {
+			fmt.Println("🚧 Processing migration:", migrationConfig.SourceURL, "->", migrationConfig.TargetURL)
 
-		fmt.Println("validating migrationConfig", migrationConfig)
+			// Select appropriate migrator based on the source provider
+			m := migrator.SelectMigrator(&migrationConfig)
 
-		// // Select appropriate migrator based on the source provider
-		// m := migrator.SelectMigrator(migrationConfig)
-		// if m == nil {
-		// 	fmt.Println("❌ Unsupported provider:", migrationConfig.SourceProvider)
-		// 	return
-		// }
+			if m == nil {
+				fmt.Println("❌ Unsupported provider:", migrationConfig.SourceProvider)
+				continue // Continue to the next repository instead of stopping execution
+			}
 
-		// // Execute the migration process
-		// fmt.Println("🚀 Executing migration...")
-		// migrator.ExecuteMigration(m, migrationConfig)
-		// fmt.Println("✅ Migration completed successfully!")
+			// Execute migration
+			// fmt.Println("🚀 Executing migration...")
+			// migrator.ExecuteMigration(m, &migrationConfig)
+			// fmt.Println("✅ Migration completed successfully!")
+		}
 	},
 }
 
 // Initialize command-line flags for the `migrate` command
-// These flags allow users to configure their migration directly from the command line
 func init() {
 	fmt.Println("🔧 Initializing migrate command...")
 	rootCmd.AddCommand(migrateCmd)
@@ -54,6 +54,7 @@ func init() {
 	migrateCmd.Flags().StringVarP(&migrationOptions.SourceProvider, "source", "s", "", "Source provider (github/gitlab/bitbucket)")
 	migrateCmd.Flags().StringVarP(&migrationOptions.TargetProvider, "target", "t", "", "Target provider (github/gitlab/bitbucket)")
 	migrateCmd.Flags().StringVarP(&migrationOptions.SourceURL, "source-url", "", "", "Source repository URL")
+	migrateCmd.Flags().StringVarP(&migrationOptions.TargetRepoName, "target-repo", "", "", "Name of the target repository")
 	migrateCmd.Flags().StringVarP(&migrationOptions.TargetURL, "target-url", "", "", "Target repository URL")
 	migrateCmd.Flags().StringVarP(&migrationOptions.SourceToken, "source-token", "", "", "Source provider token")
 	migrateCmd.Flags().StringVarP(&migrationOptions.TargetToken, "target-token", "", "", "Target provider token")
